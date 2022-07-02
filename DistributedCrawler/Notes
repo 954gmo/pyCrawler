@@ -1,0 +1,17 @@
+Distributed Crawler
+
+Scheduler Node: manage all worker nodes, send task to worker node
+Worker Nodes: receive task from scheduler node, and submit new task to scheduler node.
+
+
+Scheduler Node:
+    URL manager: manage URLs, and pass url to worker node
+    data extraction:
+    Data Storage: read data returned from worker node, and extract URL to URL manager, store title and short description.
+    Schedule
+
+
+worker nodes:
+    scheduler
+    HTML downloader
+    HTMl Parser

@@ -29,7 +29,6 @@ class DataOutput(object):
             fout.write("<tr>")
             fout.write(f"<td>{data['url']}</td>")
             if "title" in data:
-                print('title in data')
                 fout.write(f"<td>{data['title']}</td>")
             if "summary" in data:
                 fout.write(f"<td>{data['summary']}</td>")
