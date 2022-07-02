@@ -18,7 +18,6 @@ class Worker(object):
         BaseManager.register('get_task_queue')
         BaseManager.register('get_result_queue')
 
-
         print(f'connect to server {settings.SERVER}')
         self.m = BaseManager(address=(settings.SERVER, settings.PORT), authkey=settings.AUTH_KEY)
         self.m.connect()
@@ -32,7 +31,7 @@ class Worker(object):
     def crawl(self):
         while True:
             try:
-                if not self.task.empyt():
+                if not self.task.empty():
                     url = self.task.get()
                     if url == 'end':
                         print("Scheduler Notified to End task")
