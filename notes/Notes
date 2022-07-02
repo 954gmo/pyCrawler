@@ -1,0 +1,68 @@
+网页主要由三部分组成：结构（structure), 表现（presentation)， 行为（behavior)
+
+XPath, 以路径表达式来指定元素
+节点， 语法，轴，运算符
+
+节点：元素，属性，文本，命名空间，处理指令，注释，文档（根）节点
+节点的关系：Parent, Children, Sibling, Ancestor, Descendant,
+
+nodename: 选取此节点的所有子节点
+/ : 从根节点选取
+//： 选择任意位置的某个节点
+. : 选取当前节点
+.. : 选取当前节点的父节点
+@ : 选取属性
+
+/classroom/student[1]
+/classroom/student[last()]
+/classroom/student[last()-1]
+/classroom/student[postion()<3]
+//name[@lang]
+//name[@lang='en']
+/classroom/student[age>20]
+
+爬虫：
+通用，
+聚焦
+增量式
+深层
+
+通用爬虫结构：
+
+种子URL ————> 待抓取的URL ---> 读取URL,下载网页 ----> 抽取URL --> 已抓取的URL --> 待抓取的URL
+
+Regex
+
+元字符
+\b
+.
+*
+\d
+\w
+\s
+^
+$
+
+字符转义
+
+重复
+*
++
+？
+{n}
+{n,}
+{n,m}
+
+字符集合
+
+分支条件
+
+分组
+
+反义
+
+Beautiful Soup 对象种类
+Tag, name, attrs
+NavigableString
+BeautifulSoup
+Comment
