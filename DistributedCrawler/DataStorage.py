@@ -45,7 +45,9 @@ class DataOutput(object):
             for data in self.data:
                 fout.write("<tr>")
                 fout.write(f"""<td><a href="{data['url']}">{data['url']}</a></td>""")
-                fout.write(f""""<td>{data['title']}</td>""")
-                fout.write(f"""<td>{data['summary']}</td>""")
+                if 'title' in data:
+                    fout.write(f""""<td>{data['title']}</td>""")
+                if "summary" in data:
+                    fout.write(f"""<td>{data['summary']}</td>""")
                 fout.write("</tr>")
                 self.data.remove(data)
