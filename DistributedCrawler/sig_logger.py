@@ -15,6 +15,12 @@ BASE_DIR = Path(__file__).resolve().parent
 INFO_LOG = os.path.join(BASE_DIR, 'log', 'info.log')
 ERR_LOG = os.path.join(BASE_DIR, 'log', 'error.log')
 
+if not os.path.exists(INFO_LOG):
+    os.makedirs(INFO_LOG)
+
+if not os.path.exists(ERR_LOG):
+    os.makedirs(ERR_LOG)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,
