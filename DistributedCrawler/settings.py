@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent
 STORAGE = os.path.join(BASE_DIR, 'data')
 
 if not os.path.exists(STORAGE):
-    os.makedirs(STORAGE, mode=0o777)
+    os.makedirs(STORAGE)
 
 
 
