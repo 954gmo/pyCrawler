@@ -15,7 +15,7 @@ from sig_logger import console_info
 class DataOutput(object):
     def __init__(self, file):
         self.data = list()
-        self.filepath = f'{file}_{time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())}'
+        self.filepath = f'{file}_{time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())}.html'
         self.filepath = os.path.join(settings.STORAGE, self.filepath)
         self.output_head(self.filepath)
 
