@@ -135,8 +135,8 @@ if __name__ == '__main__':
     result_solve_proc.start()
     store_proc.start()
 
-    url_manager_proc.join()
-    result_solve_proc.join()
-    store_proc.join()
+    # url_manager_proc.join()
+    # result_solve_proc.join()
+    # store_proc.join()
 
     manager.get_server().serve_forever()
