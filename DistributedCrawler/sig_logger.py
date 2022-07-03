@@ -16,10 +16,10 @@ INFO_LOG = os.path.join(BASE_DIR, 'log', 'info.log')
 ERR_LOG = os.path.join(BASE_DIR, 'log', 'error.log')
 
 if not os.path.exists(INFO_LOG):
-    os.makedirs(INFO_LOG)
+    os.makedirs(INFO_LOG, mode=0o777)
 
 if not os.path.exists(ERR_LOG):
-    os.makedirs(ERR_LOG)
+    os.makedirs(ERR_LOG, mode=0o777)
 
 LOGGING = {
     "version": 1,
