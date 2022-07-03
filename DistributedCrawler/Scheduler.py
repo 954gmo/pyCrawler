@@ -108,8 +108,7 @@ class Scheduler(object):
         :param store_q: data from result_solve_proc()
         :return:
         """
-        output = DataOutput()
-        output.construct_file_path('wikipedia')
+        output = DataOutput('wikipedia')
         while True:
             if not store_q.empty():
                 data = store_q.get()

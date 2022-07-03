@@ -17,11 +17,11 @@ ERR_LOG = os.path.join(BASE_DIR, 'log', 'error.log')
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False,
-    "root": {
-        "level": "INFO",
-        "handlers": ["info"]
-    },
+    "disable_existing_loggers": True,
+    # "root": {
+    #     "level": "INFO",
+    #     "handlers": ["info"]
+    # }, # will make INFO duplicated.
     "handlers": {
         "console": {
             "level": "INFO",
@@ -115,5 +115,5 @@ def console_info(msg):
 
 
 def console_err(msg):
-    err_logger.error(msg)
+    err_logger.info(msg)
     console.info(msg)

@@ -16,5 +16,12 @@ AUTH_KEY = 'sig_baike'.encode('utf-8')
 MAX_URL = 2000
 WRITE_PER_ENTRY_CNT = 20
 
+BASE_DIR = Path(__file__).resolve().parent
+STORAGE = os.path.join(BASE_DIR, 'data')
+
+if not os.path.exists(STORAGE):
+    os.makedirs(STORAGE)
+
+
 
 

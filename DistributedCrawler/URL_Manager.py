@@ -8,6 +8,7 @@ __author__ = "GWONGZAN"
 
 import pickle
 import hashlib
+from sig_logger import console_info, console_err
 
 
 class URLManager(object):
@@ -51,11 +52,11 @@ class URLManager(object):
             pickle.dump(data, f)
 
     def load_progress(self, path):
-        print(f'loading progress from file ({path}) ....')
+        console_info(f'loading progress from file ({path}) ....')
         try:
             with open(path, 'rb') as f:
                 tmp = pickle.load(f)
                 return tmp
         except Exception as e:
-            print(f'[!] no progress file, {path}, create new set()')
+            console_err(f'[!] no progress file, {path}, create new set()')
         return set()
