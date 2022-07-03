@@ -8,7 +8,6 @@ __author__ = "GWONGZAN"
 
 
 import re
-import urllib.parse
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 

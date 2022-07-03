@@ -6,28 +6,30 @@ from __future__ import print_function
 __ENTITY_author__ = "SIX DIGIT INVESTMENT GROUP"
 __author__ = "GWONGZAN"
 
-import codecs
+
 import time
+import settings
+from sig_logger import console_info
 
 
 class DataOutput(object):
-    def __init__(self):
+    def __init__(self, file):
         self.data = list()
-        self.filepath = ''
-
-    def construct_file_path(self, file):
         self.filepath = f'{file}_{time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())}'
+        self.output_head(self.filepath)
 
     def store_data(self, data):
         if data is None:
             return
         self.data.append(data)
-        if len(self.data) > 10:
+        if len(self.data) > settings.WRITE_PER_ENTRY_CNT:
+            console_info(f"write data to file per {settings.WRITE_PER_ENTRY_CNT} entries")
             self.output_html(self.filepath)
 
     def output_head(self, path):
         with open(path, 'w', encoding='utf-8') as fout:
             fout.write('<html>')
+            fout.write(r'''<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />''')
             fout.write('<body>')
             fout.write('<table>')
 
