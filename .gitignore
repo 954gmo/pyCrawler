@@ -1,3 +1,7 @@
 RegEx/UtilityAPI/PembrokePinesFL UB Bill PDF.pdf
-RegEx/j/*
-RegEx/exercise
+others/*
+DistributedCrawler/data/*
+DistributedCrawler/log/*
+RegEx/UtilityAPI/sdge_bill.pdf
+RegEx/UtilityAPI/requirements.txt
+RegEx/UtilityAPI/pge_meter_details.html
