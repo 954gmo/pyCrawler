@@ -11,14 +11,16 @@ def read_pdf_txt(file=''):
         text = ''
         for page in reader.pages:
             text += page.extractText()
-    return txt
+    return text
 
 
 def pdf_parser(content=''):
+    res = content
     return res
 
 
 if __name__ == "__main__":
-    txt = read_pdf_txt(file=os.path.join(Path(__file__).parent, ''))
+    file = os.path.join(Path(__file__).parent, 'PembrokePinesFL UB Bill PDF.pdf')
+    txt = read_pdf_txt(file=file)
     res = pdf_parser(txt)
     print(res)

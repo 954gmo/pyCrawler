@@ -12,10 +12,12 @@ def parse_html(file=''):
 
 
 def html_parser(soup=''):
+    res = soup
     return res
 
 
 if __name__ == "__main__":
-    file = os.path.join(Path(__file__).parent, '')
+    file = os.path.join(Path(__file__).parent, 'tmp.html')
     txt = parse_html(file)
     res = html_parser(txt)
+    print(res)
