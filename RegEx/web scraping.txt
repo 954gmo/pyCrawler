@@ -1,0 +1,41 @@
+web scraping, transfrom unstructured data into structured data, it is a way to collect, organize and analyze data.
+
+scraping: a process of extracting, copying and screening of data.
+
+
+HTML Tree Structure
+                     Window
+                        |
+                        |
+                    Document
+                        |
+                        |
+                       HTML
+                        |
+                       /  \
+                     /      \
+                    /         \
+                  Head       body
+                /    \
+               /      \
+            title    style
+
+
+Four major kinds of objects
+- Tag: an HTML or XML tag in the actual page/ document
+    multi-valued attributes
+    name and attributes
+    soup.title
+    soup.title.name
+    soup.title['class']
+- NavigableString
+    content of a tag
+- BeautifulSoup
+- Comments
+
+searching the tree
+kinds of filters
+soup.find_all(re.compile('^p'))
+soup.find_all('p')
+soup.find_all(['a', 'p'])
+soup.find_all(True)

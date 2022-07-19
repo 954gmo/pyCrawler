@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Python <span class="color_h1">RegEx</span></h1>
+<hr>
+<p class="intro">A RegEx, or Regular Expression, is a sequence of characters that forms a search pattern.</p>
+<p class="intro">RegEx can be used to check if a string contains the specified search pattern.</p>
+<p class="intro">Match object: an object containing information about the search and results, .span(), .string, .group()</p>
+<hr>
+<table class="ws-table-all notranslate">
+<tr>
+<th style="width:120px">Function</th>
+<th>Description</th>
+</tr>
+<tr>
+<td><a href="#findall">findall</a></td>
+<td>Returns a list containing all matches</td>
+</tr>
+<tr>
+<td><a href="#search">search</a></td>
+<td>Returns a <a href="#matchobject">Match object</a> if there is a match anywhere in the string</td>
+</tr>
+<tr>
+<td><a href="#split">split</a></td>
+<td>Returns a list where the string has been split at each match </td>
+</tr>
+<tr>
+<td><a href="#sub">sub</a></td>
+<td>Replaces one or many matches with a string</td>
+</tr>
+</table>
+<hr>
+<h2>Metacharacters: <pre>characters with special meaning</pre></h2>
+
+<table class="ws-table-all notranslate">
+<tr>
+<th style="width:120px">Character</th>
+<th>Description</th>
+<th style="width:120px">Example</th>
+
+</tr>
+<tr>
+<td>[]</td>
+<td>A set of characters</td>
+<td>&quot;[a-m]&quot;</td>
+</tr>
+<tr>
+<td>\</td>
+<td>Signals a special sequence (can also be used to escape special characters)</td>
+<td>&quot;\d&quot;</td>
+</tr>
+<tr>
+<td>.</td>
+<td>Any character (except newline character)</td>
+<td>&quot;he..o&quot;</td>
+</tr>
+<tr>
+<td>^</td>
+<td>Starts with</td>
+<td>&quot;^hello&quot;</td>
+</tr>
+  <tr>
+<td>$</td>
+<td>Ends with</td>
+<td>&quot;planet$&quot;</td>
+  </tr>
+  <tr>
+<td>*</td>
+<td>Zero or more occurrences</td>
+<td>&quot;he.*o&quot;</td>
+  </tr>
+  <tr>
+<td>+</td>
+<td>One or more occurrences</td>
+<td>&quot;he.+o&quot;</td>
+  </tr>
+  <tr>
+<td>?</td>
+<td>Zero or one occurrences</td>
+<td>&quot;he.?o&quot;</td>
+  </tr>
+  <tr>
+<td>{}</td>
+<td>Exactly the specified number of occurrences</td>
+<td>&quot;he.{2}o&quot;</td>
+  </tr>
+  <tr>
+<td>|</td>
+<td>Either or</td>
+<td>&quot;falls|stays&quot;</td>
+  </tr>
+  <tr>
+<td>()</td>
+<td>Capture and group</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+  </tr>
+</table>
+<hr>
+
+<h2>Special Sequences</h2>
+
+<p>A special sequence is a <code class="w3-codespan">\</code> followed by one of the characters in the list below, and has a special meaning:</p>
+
+<table class="ws-table-all notranslate">
+<tr>
+<th style="width:120px">Character</th>
+<th>Description</th>
+<th style="width:120px">Example</th>
+
+</tr>
+<tr>
+<td>\A</td>
+<td>Returns a match if the specified characters are at the beginning of the
+string</td>
+<td>&quot;\AThe&quot;</td>
+</tr>
+  <tr>
+<td>\b</td>
+<td>Returns a match where the specified characters are at the beginning or at the
+end of a word<br>(the &quot;r&quot; in the beginning is making sure that the string is
+being treated as a &quot;raw string&quot;)</td>
+<td>r&quot;\bain&quot;<br>r&quot;ain\b&quot;</td>
+
+
+  </tr>
+  <tr>
+<td>\B</td>
+<td>Returns a match where the specified characters are present, but NOT at the beginning
+(or at
+the end) of a word<br>(the &quot;r&quot; in the beginning is making sure that the string
+is being treated as a &quot;raw string&quot;)</td>
+<td>r&quot;\Bain&quot;<br>r&quot;ain\B&quot;</td>
+
+
+  </tr>
+  <tr>
+<td>\d</td>
+<td>Returns a match where the string contains digits (numbers from 0-9)</td>
+<td>&quot;\d&quot;</td>
+  </tr>
+  <tr>
+<td>\D</td>
+<td>Returns a match where the string DOES NOT contain digits</td>
+<td>&quot;\D&quot;</td>
+  </tr>
+  <tr>
+<td>\s</td>
+<td>Returns a match where the string contains a white space character</td>
+<td>&quot;\s&quot;</td>
+  </tr>
+  <tr>
+<td>\S</td>
+<td>Returns a match where the string DOES NOT contain a white space character</td>
+<td>&quot;\S&quot;</td>
+  </tr>
+  <tr>
+<td>\w</td>
+<td>Returns a match where the string contains any word characters (characters from
+a to Z, digits from 0-9, and the underscore _ character)</td>
+<td>&quot;\w&quot;</td>
+  </tr>
+  <tr>
+<td>\W</td>
+<td>Returns a match where the string DOES NOT contain any word characters</td>
+<td>&quot;\W&quot;</td>
+  </tr>
+<tr>
+<td>\Z</td>
+<td>Returns a match if the specified characters are at the end of the string</td>
+<td>&quot;Spain\Z&quot;</td>
+</tr>
+</table>
+
+<hr>
+
+<h2>Sets</h2>
+
+<p>A set is a set of characters inside a pair of square brackets <code class="w3-codespan">
+[]</code> with a special meaning:</p>
+
+<table class="ws-table-all notranslate">
+<tr>
+<th style="width:120px">Set</th>
+<th>Description</th>
+
+</tr>
+  <tr>
+<td>[arn]</td>
+<td>Returns a match where one of the specified characters (<code class="w3-codespan">a</code>,
+<code class="w3-codespan">r</code>, or <code class="w3-codespan">n</code>) is
+present</td>
+  </tr>
+  <tr>
+<td>[a-n]</td>
+<td>Returns a match for any lower case character, alphabetically between
+<code class="w3-codespan">a</code> and <code class="w3-codespan">n</code></td>
+  </tr>
+  <tr>
+<td>[^arn]</td>
+<td>Returns a match for any character EXCEPT <code class="w3-codespan">a</code>,
+<code class="w3-codespan">r</code>, and <code class="w3-codespan">n</code></td>
+  </tr>
+  <tr>
+<td>[0123]</td>
+<td>Returns a match where any of the specified digits (<code class="w3-codespan">0</code>,
+<code class="w3-codespan">1</code>, <code class="w3-codespan">2</code>, or <code class="w3-codespan">
+3</code>) are
+present</td>
+  </tr>
+  <tr>
+<td>[0-9]</td>
+<td>Returns a match for any digit between
+<code class="w3-codespan">0</code> and <code class="w3-codespan">9</code></td>
+  </tr>
+<tr>
+<td>[0-5][0-9]</td>
+<td>Returns a match for any two-digit numbers from <code class="w3-codespan">00</code> and <code class="w3-codespan">
+59</code></td>
+</tr>
+  <tr>
+<td>[a-zA-Z]</td>
+<td>Returns a match for any character alphabetically between
+<code class="w3-codespan">a</code> and <code class="w3-codespan">z</code>, lower case OR upper case</td>
+  </tr>
+  <tr>
+<td>[+]</td>
+<td>In sets, <code class="w3-codespan">+</code>, <code class="w3-codespan">*</code>,
+<code class="w3-codespan">.</code>, <code class="w3-codespan">|</code>,
+<code class="w3-codespan">()</code>, <code class="w3-codespan">$</code>,<code class="w3-codespan">{}</code>
+has no special meaning, so <code class="w3-codespan">[+]</code> means: return a match for any
+<code class="w3-codespan">+</code> character in the string</td>
+  </tr>
+</table>
+
+
+</body>
+</html>
