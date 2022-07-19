@@ -4,20 +4,10 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 import re
 
-
-def parse_html(file=''):
+if __name__ == "__main__":
+    file = os.path.join(Path(__file__).parent, 'pge_meter_details.html')
     with open(file, 'r', encoding='utf8') as f:
         soup = BeautifulSoup(f, 'html.parser')
-    return soup
+        service_addr = soup.find('div', {'class': 'module-body sa-info'}).find('ul').find_all('li')[:2]
+        print(re.sub(r'\s+', ' ', service_addr[0].string) + "," + re.sub(r'\s+', ' ', service_addr[1].string))
 
-
-def html_parser(soup=''):
-    res = soup
-    return res
-
-
-if __name__ == "__main__":
-    file = os.path.join(Path(__file__).parent, 'tmp.html')
-    txt = parse_html(file)
-    res = html_parser(txt)
-    print(res)

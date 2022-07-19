@@ -20,7 +20,7 @@ def pdf_parser(content=''):
 
 
 if __name__ == "__main__":
-    file = os.path.join(Path(__file__).parent, 'PembrokePinesFL UB Bill PDF.pdf')
+    file = os.path.join(Path(__file__).parent, 'sdge_bill.pdf')
     txt = read_pdf_txt(file=file)
     res = pdf_parser(txt)
     print(res)
