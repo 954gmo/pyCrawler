@@ -13,8 +13,6 @@ if __name__ == "__main__":
             text += page.extractText()
     tmp = re.sub(r'\s+', ' ', text)
     tmp = re.search(r"Electric Service.*(Meter Number:.*?)(\d+).*Total Taxes & Fees on Electric Charges .*\$(\d+\.?\d+).*?Total Electric Service", tmp)
-    print('Meter Number:')
-    print(tmp[2])
-    print('Total Taxes & Fees on Electric Charges:')
-    print('-' + tmp[3])
+    print(f'Meter Number: {tmp[2]} \nTotal Taxes & Fees on Electric Charges: -{tmp[3]}')
+
 
