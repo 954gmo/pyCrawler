@@ -2,6 +2,7 @@
 import PyPDF2
 from pathlib import Path
 import os
+import re
 
 
 def read_pdf_txt(file=''):
@@ -14,9 +15,10 @@ def read_pdf_txt(file=''):
 
 
 def pdf_parser(content=''):
-    pass
+    return res
 
 
 if __name__ == "__main__":
-    txt = read_pdf_txt(file=os.path.join(Path(__file__).parent, 'PembrokePinesFL UB Bill PDF.pdf'))
-    pdf_parser(txt)
+    txt = read_pdf_txt(file=os.path.join(Path(__file__).parent, ''))
+    res = pdf_parser(txt)
+    print(res)
