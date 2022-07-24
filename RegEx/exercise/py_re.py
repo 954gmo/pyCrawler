@@ -967,3 +967,32 @@ re.sub(r'\b(\w+)( \1)+\b', r'\1', 'aa a a a 42 f_1 f_1 f_13.14')
 s = 'abcdefghijklmna1d'
 re.sub(r'(.).*\1\x31', 'X', s)
 
+# normal capture group will hinder ability to get whole match
+# non-capturing group to the rescue
+re.findall(r'\b\w*(?:st|in)\b', 'cost akin more east run against')
+
+# capturing wasn't needed here, only common grouping and quantifier
+re.split(r'hand(?:y|ful)?', '123hand42handy777handful500')
+
+# Named capture groups (?P<name>pat)
+re.sub(r'(?P<first_word>\w+),(?P<second_word>\w+)', r'\g<second_word>,\g<first_word>', 'good,bad 42,24')
+
+s = 'aa a a a 42 f_1 f_1 f_13.14'
+re.sub(r'\b(?P<consecutive_duplicate_word>\w+)( (?P=consecutive_duplicate_word))+\b', r'\g<consecutive_duplicate_word>', s)
+sentence = 'I bought an apple'
+m = re.search(r'(?P<fruit>\w+)\Z', sentence)
+m['fruit']
+m.group('fruit')
+
+details = '2018-10-25,car,2346'
+re.search(r'(?P<date>\d+-\d+-\d+)', details)
+re.search(r'(?P<date>[^,]+),(?P<product>[^,],)+', details).groupdict()
+# normal groups won't be part of the output
+re.search(r'(?P<date>[^,]+),([^,]+)', details).groupdict()
+# multiple matches
+s = 'good,bad 42,24'
+[m.groupdict() for m in re.finditer(r'(?P<first_word>\w+),(?P<second_word>\w+)', s)]
+words = ['"hi"', 'bye', 'bad"', '"good"', '42', '"3']
+pat = re.compile(r'(")?\w+(?(1)")')
+[w for w in words if pat.fullmatch(w)]
+

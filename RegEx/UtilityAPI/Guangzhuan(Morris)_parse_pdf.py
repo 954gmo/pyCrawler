@@ -12,7 +12,7 @@ if __name__ == "__main__":
         for page in reader.pages:
             text += page.extractText()
     tmp = re.sub(r'\s+', ' ', text)
-    tmp = re.search(r"Electric Service.*(Meter Number:.*?)(\d+).*Total Taxes & Fees on Electric Charges .*\$(\d+\.?\d+).*?Total Electric Service", tmp)
-    print(f'Meter Number: {tmp[2]} \nTotal Taxes & Fees on Electric Charges: -{tmp[3]}')
+    tmp = re.search(r"Electric Service.*(Meter Number:.*?)(?P<meter_number>\d+).*Total Taxes & Fees on Electric Charges .*\$(?P<total_tax>\d+\.?\d+).*?Total Electric Service", tmp)
+    print(f'Meter Number: {tmp["meter_number"]} \nTotal Taxes & Fees on Electric Charges: -{tmp["total_tax"]}')
 
 
