@@ -5,3 +5,4 @@ DistributedCrawler/log/*
 RegEx/UtilityAPI/sdge_bill.pdf
 RegEx/UtilityAPI/requirements.txt
 RegEx/UtilityAPI/pge_meter_details.html
+.idea/
