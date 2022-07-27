@@ -11,6 +11,17 @@ __author__ = "GWONGZAN"
 
 """
 re.Match
+    .span(n) : (starting idx, ending+1 idx)
+    .start(n)
+    .end(n)
+    [n]: 0 
+    .group(n)
+    .groups()
+    .string
+    .re
+    .pos
+    .endpos
+    
 re.Pattern
 
 re.Pattern <= re.compile(pattern, flags=0)
@@ -23,12 +34,18 @@ re.Match <= re.Pattern.search(string[, pos [, endpos])
 re.Match <= re.fullmatch(pattern, string, flags=0)
 re.Match <= re.Pattern.fullmatch(string)
 
+[str,] or [(str,),]<= re.findall(pattern, string, flags=0)
+
+iterable <= re.finditer(pattern, string, flags=0)
+
+
 
 # modifying string
 str <= re.sub(pattern, repl, string, count=0, flags=0)
 (str, n) <= re.Pattern.sub(repl, string, count=0, flags=0)
 
-
+re.escape
+re.split(pattern, string, maxsplit=0, flags=0)
 
 
 
@@ -331,3 +348,336 @@ s2 = 'refused reed redo received'
 pat = re.compile(r're(mov|ceiv|fus|)ed')
 pat.sub('X', s1)
 pat.sub('X', s2)
+
+# d) For the given input strings, replace all matches from the list words with A.
+s1 = 'plate full of slate'
+s2 = "slated for later, don't be late"
+words = ['late', 'later', 'slated']
+
+pat = re.compile('|'.join(sorted(words, key=len, reverse=True)))
+pat.sub('A', s1)
+pat.sub('A', s2)
+
+# e) Filter all whole elements from the input list items based on elements listed in words.
+items = ['slate', 'later', 'plate', 'late', 'slates', 'slated ']
+words = ['late', 'later', 'slated']
+pat = re.compile('|'.join(sorted(words, key=len, reverse=True)))
+[i for i in items if pat.fullmatch(i)]
+# or, remark, whole words : \A \Z, not \b \b
+pat = re.compile(r'\A(' + '|'.join(sorted(words, key=len, reverse=True)) + r')\Z')
+[i for i in items if pat.search(i)]
+
+
+"""
+    ------------- 6 --------------
+"""
+bool(re.search(r'b^2', 'a^2 + b^2 - C*3'))      # F
+bool(re.search(r'b\^2', 'a^2 + b^2 - C*3'))     # T
+re.sub(r'\(|\)', '', '(a*b) + c')
+re.sub(r'\\', '/', r'\learn\by\example')
+
+# For real world use cases, ask yourself if regular expressions is needed at all?
+eqn = 'f*(a^b) - 3*(a^b)'
+eqn.replace('(a^b)', 'c')
+
+# replace only at end of string
+expr = '(a^b)'
+eqn = 'f*(a^b) - 3*(a^b)'
+re.sub(re.escape(expr) + r'\Z', 'c', eqn)
+
+terms = ['a_42', '(a^b)', '2|3']
+# using 're.escape' and 'join' to construct the pattern
+pat1 = re.compile('|'.join(re.escape(s) for s in terms))
+# using only 'join' to construct the pattern
+pat2 = re.compile('|'.join(terms))
+s = 'ba_423 (a^b)c 2|3 a^b'
+pat1.sub('X', s)
+pat2.sub('X', s)
+
+# escape sequences
+re.sub(r'\t', ':', 'a\tb\tc')
+re.sub(r'\n', ' ', '1\n2\n3')
+re.search(r'\e', 'hello')
+
+# represent a character using hexadecimal escape of the format \xNN
+re.sub(r'\x20', '', 'h e l l o')    # \x20 is space character
+re.sub(r'\x7c3', '5', '12|30')      # \x7c is '|' character
+
+# a) Transform the given input strings to the expected output using same logic on both strings.
+str1 = '(9-2)*5+qty/3'
+str2 = '(qty+4)/2-(9-2)*5+pq/4'
+expr = '(9-2)*5'
+pat = re.compile(re.escape(expr))
+pat.sub('35', str1)
+pat.sub('35', str2)
+
+# b) Replace (4)\| with 2 only at the start or end of given input strings.
+s1 = r'2.3/(4)\|6 foo 5.3-(4)\|'
+s2 = r'(4)\|42 - (4)\|3'
+s3 = 'two - (4)\\|\n'
+
+expr = '(4)\|'
+pat = re.compile(r'\A' + re.escape(expr) + r'|' + re.escape(expr) + r'\Z')
+pat.sub('2', s1)
+pat.sub('2', s2)
+pat.sub('2', s3)
+
+# c) Replace any matching element from the list items with X for given the input strings.
+# Match the elements from items literally.
+# Assume no two elements of items will result in any matching conflict.
+items = ['a.b', '3+n', r'x\y\z', 'qty||price', '{n}']
+pat = re.compile('|'.join([re.escape(i) for i in items]))
+pat.sub('X', '0a.bcd')
+pat.sub('X', 'E{n}AMPLE')
+pat.sub('X', r'43+n2 ax\y\ze')
+
+# d) Replace backspace character \b with a single space character for the given input string.
+ip = '123\b456'
+re.sub(re.escape('\b'), ' ', ip)
+
+# e) Replace all occurrences of \e with e.
+ip = r'th\er\e ar\e common asp\ects among th\e alt\ernations'
+re.sub(re.escape('\e'), 'e', ip)
+
+# f) Replace any matching item from the list eqns with X for given the string ip. Match the items from eqns literally.
+ip = '3-(a^b)+2*(a^b)-(a/b)+3'
+eqns = ['(a^b)', '(a/b)', '(a^b)+2']
+pat = re.compile('|'.join(sorted([re.escape(i) for i in eqns], key=len, reverse=True)))
+pat.sub('X', ip)
+
+"""
+    ------------- 7 -------------
+"""
+
+# matches character 'c', any character and then character 't'
+re.sub(r'c.t', 'X', 'tac tin cat abc;tuv acute')
+# matches character 'r', any two characters and then character 'd'
+re.sub(r'r..d', 'X', 'breadth markedly reported overrides')
+# matches character '2', any character and then character '3'
+re.sub(r'2.3', '8', '42\t35')
+# by default, dot metacharacter doesn't match newline character
+bool(re.search(r'a.b', 'a\nb'))     # F
+
+# same as: 'apple-85-mango-70'.split('-')
+re.split('-', 'apple-85-mango-70')
+# maxsplit determines the maximum number of times to split the input
+re.split('-', 'apple-85-mango-70', maxsplit=1)
+
+re.split(r':.:', 'bus:3:car:5:van')
+
+# same as: r'ear|ar'
+re.sub(r'e?ar', 'X', 'far feat flare fear')
+# same as: r'\bpar(t|)\b'
+re.sub(r'\bpart?\b', 'X', 'par spare part party')
+# same as: r'\b(re.d|red)\b'
+words = ['red', 'read', 'ready', 're;d', 'road', 'redo', 'reed', 'rod']
+[w for w in words if re.search(r'\bre.?d\b', w)]
+# same as: r'part|parrot'
+re.sub(r'par(ro)?t', 'X', 'par part parrot parent')
+# same as: r'part|parent|parrot'
+re.sub(r'par(en|ro)?t', 'X', 'par part parrot parent')
+
+# match 't' followed by zero or more of 'a' followed by 'r'
+re.sub(r'ta*r', 'X', 'tr tear tare steer sitaara')
+# match 't' followed by zero or more of 'e' or 'a' followed by 'r'
+re.sub(r't(e|a)*r', 'X', 'tr tear tare steer sitaara')
+# match zero or more of '1' followed by '2'
+re.sub(r'1*2', 'X', '3111111111125111142')
+
+# last element is empty because there is nothing after 2 at the end of string
+re.split(r'1*2', '3111111111125111142')
+re.split(r'1*2', '3111111111125111142', maxsplit=1)
+
+# empty string matches at start and end of string
+# it matches between every character
+# and, there is an empty match after the split at u
+re.split(r'u*', 'cloudy')
+
+re.sub(r'ta+r', 'X', 'tr tear tare steer sitaara')
+re.sub(r't(e|a)+r', 'X', 'tr tear tare steer sitaara')
+
+demo = ['abc', 'ac', 'adc', 'abbc', 'xabbbcz', 'bbb', 'bc', 'abbbbbc']
+[d for d in demo if re.search(r'ab{1,4}c', d)]
+[d for d in demo if re.search(r'ab{3,}c', d)]
+[d for d in demo if re.search(r'ab{,2}c', d)]
+[d for d in demo if re.search(r'ab{3}c', d)]
+
+# conditional AND
+# match 'Error' followed by zero or more characters followed by 'valid'
+bool(re.search(r'Error.*valid', 'Error: not a valid input'))
+bool(re.search(r'Error.*valid', 'Error: key not found'))
+
+seq1 = 'cat and dog'
+seq2 = 'dog and cat'
+bool(re.search(r'cat.*dog|dog.*cat', seq1))
+# if you just need True/False result, this would be a scalable approach
+pat = (r'cat', r'dog')
+all(re.search(p, seq1) for p in pat)
+all(re.search(p, seq2) for p in pat)
+
+# a more practical example
+# prefix '<' with '\' if it is not already prefixed
+# both '<' and '\<' will get replaced with '\<'
+# note the use of raw string for all the three arguments
+re.sub(r'\\?<', r'\<', r'blah \< foo < bar \< blah < baz')
+
+re.sub(r'hand(y|ful)?', 'X', 'hand handy handful')
+
+# non-greedy quantifiers, lazy or reluctant quantifiers
+re.sub(r'f.??o', 'X', 'foot')
+re.sub(r'.{2,5}?', 'X', '123456789')    # XXXX9
+re.split(r':.*?:', 'green:3.14:teal::brown:oh!:blue')
+
+# a) Replace 42//5 or 42/5 with 8 for the given input.
+ip = 'a+42//5-c pressure*3+42/5-14256'
+# re.sub(r'42/+5', '8', ip)
+re.sub(r'42//?5', '8', ip)
+
+# b) For the list items, filter all elements starting with hand and ending with at most one more character or le.
+items = ['handed', 'hand', 'handled', 'handy', 'unhand', 'hands', 'handle']
+[i for i in items if re.search(r'\Ahand(.|le)?\Z', i)]
+[i for i in items if re.search(r'hand(.|le)?', i)]
+
+# c) Use re.split to get the output as shown for the given input strings.
+eqn1 = 'a+42//5-c'
+eqn2 = 'pressure*3+42/5-14256'
+eqn3 = 'r*42-5/3+42///5-42/53+a'
+
+pat = re.compile(r'42//?5')
+pat.split(eqn1)     # ['a+', '-c']
+pat.split(eqn2)     # ['pressure*3+', '-14256']
+pat.split(eqn3)     # ['r*42-5/3+42///5-', '3+a']
+
+# d) For the given input strings, remove everything from the first occurrence of i till end of the string.
+s1 = 'remove the special meaning of such constructs'
+s2 = 'characters while constructing'
+pat = re.compile(r'i.*\Z')
+pat = re.compile(r'i.*')
+pat.sub('', s1)
+
+# e) For the given strings, construct a RE to get output as shown.
+str1 = 'a+b(addition)'
+str2 = 'a/b(division) + c%d(#modulo)'
+str3 = 'Hi there(greeting). Nice day(a(b)'
+pat = re.compile(r'\(.*?\)')
+pat.sub('', str1)
+
+# f) Correct the given RE to get the expected output.
+words = 'plink incoming tint winter in caution sentient'
+p = ['int', 'in', 'ion', 'ing', 'inco', 'inter', 'ink']
+pat = re.compile('|'.join(sorted(p, key=len, reverse=True)))
+pat = re.compile(r'in(ter|co|g|t|k)?|ion')
+pat.sub('X', words)
+
+# g) For the given greedy quantifiers, what would be the equivalent form using {m,n} representation?
+
+# ? is same as {0,1}
+# * is same as {0,}
+# + is same as {1,}
+
+# i) For the given input strings,
+# remove everything from the first occurrence of test (irrespective of case) till end of the string,
+# provided test isn't at the end of the string.
+s1 = 'this is a Test'
+s2 = 'always test your RE for corner cases'
+s3 = 'a TEST of skill tests?'
+pat = re.compile(r'test.+\Z', flags=re.I)
+pat = re.compile(r'test.+', flags=re.I)
+pat.sub('', s1)
+
+# j) For the input list words,
+# filter all elements starting with s and containing e and t in any order.
+words = ['sequoia', 'subtle', 'exhibit', 'asset', 'sets', 'tests', 'site']
+# [w for w in words if re.search(r'^s.*[et].*', w)]
+[w for w in words if re.search(r'^s.*e.*', w) and re.search(r'^s.*t.*', w)]
+[w for w in words if re.search(r'\As.*(e.*t|t.*e)', w)]
+
+# k) For the input list words, remove all elements having less than 6 characters.
+words = ['sequoia', 'subtle', 'exhibit', 'asset', 'sets', 'tests', 'site']
+[w for w in words if re.search(r'.{6,}', w)]
+
+# l) For the input list words, filter all elements starting with s or t and having a maximum of 6 characters.
+words = ['sequoia', 'subtle', 'exhibit', 'asset', 'sets', 'tests', 'site']
+[w for w in words if re.search(r'\A[st].{0,5}\Z', w)]
+[w for w in words if re.fullmatch(r'[st].{,5}', w)]
+[w for w in words if re.fullmatch(r'(s|t).{,5}', w)]
+
+# m) Can you reason out why this code results in the output shown?
+# The aim was to remove all <characters> patterns but not the <> ones.
+# The expected result was 'a 1<> b 2<> c'.
+ip = 'a<apple> 1<> b<bye> 2<> c<cat>'
+re.sub(r'<.+?>', '', ip)    # 'a 1 2'
+re.sub(r'<\w+?>', '', ip)
+
+# n) Use re.split to get the output as shown below for given input strings.
+s1 = 'go there  //   "this // that"'
+s2 = 'a//b // c//d e//f // 4//5'
+s3 = '42// hi//bye//see // carefully'
+
+pat = re.compile(r'\s+//\s+')
+
+pat.split(s1, maxsplit=1)# ['go there', '"this // that"']
+# ['a//b', 'c//d e//f // 4//5']
+# ['42// hi//bye//see', 'carefully']
+
+"""
+    --------------- 9 -------------------
+"""
+
+# assignment expressions
+if m := re.search(r'(.*)s', 'oh!'):
+    print(m[1])
+
+text = ['type: fruit', 'date: 2020/04/28']
+for ip in text:
+    if m := re.search(r'type: (.*)', ip):
+        print(m[1])
+    elif m := re.search(r'date: (.*?)/(.*?)/', ip):
+        print(f'month: {m[2]}, year: {m[1]}')
+
+# using functions in replacement section
+# an re.Match object will be passed to the function as argument
+re.sub(r'(a|b)\^2', lambda m: m[0].upper(), 'a^2 + b^2 - C*3')
+re.sub(r'2|3', lambda m: str(int(m[0])**2), 'a^2 + b^2 - C*3')
+
+# using dict in replacement section
+# one to one mappings
+d = {'1': 'one', '2': 'two', '4': 'four'}
+re.sub(r'1|2|4', lambda m: d[m[0]], '9234012')
+
+# if the matched text doesn't exist as a key, default value will be used
+re.sub('\d', lambda m: d.get(m[0], 'X'), '9234012')
+
+swap = {'cat': 'tiger', 'tiger': 'cat'}
+words = 'cat tiger dog tiger cat'
+re.sub(r'cat|tiger', lambda m: swap[m[0]], words)
+
+# note that numbers have been converted to strings here
+# otherwise, you'd need to convert it in the lambda code
+d = {'hand': '1', 'handy': '2', 'handful': '3', 'a^b': '4'}
+words = sorted(d.keys(), key=len, reverse=True)
+pat = re.compile('|'.join(re.escape(s) for s in words))
+pat.sub(lambda m: d[m[0]], 'handful hand pin handy (a^b)')
+
+re.findall(r'ab*c', 'abc ac adc abbbc')
+re.findall(r'\bs?pare?\b', 'PAR spar apparent SpArE part pare', flags=re.I)
+re.findall(r'ab*c', 'abc ac adc abbc xabbbcz bbb bc abbbbbc')
+
+# with capture group(s)
+re.findall(r'a(b*)c', 'abc ac adc abbc xabbbcz bbb bc abbbbbc')
+re.findall(r'a(?:b*)c', 'abc ac adc abbc xabbbcz bbb bc abbbbbc')
+re.findall(r'(.*?)/(.*?)/(.*?),', '2020/04/25,1986/Mar/02,77/12/31')
+
+re.finditer(r'ab+c', 'abc ac adc abbbc')
+
+# each element is a re.Match object corresponding to the matched portion
+m_iter = re.finditer(r'ab+c', 'abc ac adc abbbc')
+for m in m_iter:
+    print(m)
+
+d = '2020/04/25,1986/Mar/02,77/12/31'
+m_iter = re.finditer(r'(.*?)/(.*?)/(.*?),', d)
+[m.groups() for m in m_iter]
+
+# to include the matching portions of the pattern as well in the output
+re.split(r'(1*4?2)', '31111111111251111426')
