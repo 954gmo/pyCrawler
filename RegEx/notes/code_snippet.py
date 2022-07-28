@@ -43,6 +43,8 @@ iterable <= re.finditer(pattern, string, flags=0)
 # modifying string
 str <= re.sub(pattern, repl, string, count=0, flags=0)
 (str, n) <= re.Pattern.sub(repl, string, count=0, flags=0)
+str <= re.subn(pattern, repl, string, count=0, flags=0)
+
 
 re.escape
 re.split(pattern, string, maxsplit=0, flags=0)
@@ -681,3 +683,127 @@ m_iter = re.finditer(r'(.*?)/(.*?)/(.*?),', d)
 
 # to include the matching portions of the pattern as well in the output
 re.split(r'(1*4?2)', '31111111111251111426')
+# without capture group
+re.split(r'1*4?2', '31111111111251111426')
+# here 4?2 is outside capture group, so that portion won't be in output
+re.split(r'(1*)4?2', '31111111111251111426')
+# multiple capture groups example
+# note that the portion matched by b+ isn't present in the output
+re.split(r'(a+)b+(c+)', '3.14aabccc42')
+# here (4)? matches zero times on the first occasion
+re.split(r'(1*)(4)?2', '31111111111251111426')
+['3', '1111111111', None, '5', '1111', '4', '6']
+
+# Use of capture groups and maxsplit=1 gives behavior similar to str.partition(separator) method.
+# first element is portion before the first match
+# second element is portion matched by the pattern itself
+# third element is rest of the input string
+re.split(r'(a+b+c+)', '3.14aabccc42abc88', maxsplit=1)
+['3.14', 'aabccc', '42abc88']
+
+greeting = 'Have a nice weekend'
+re.subn(r'e', 'E', greeting)
+
+word = 'coffining'
+# recursively delete 'fin'
+while True:
+    word, cnt = re.subn(r'fin', '', word)
+    if cnt == 0:
+        break
+
+# a) For the given strings, extract the matching portion from first is to last t.
+str1 = 'This the biggest fruit you have seen?'
+str2 = 'Your mission is to read and practice consistently'
+pat = re.compile(r'(is.*t)')
+pat.search(str1)[0]
+
+# b) Find the starting index of first occurrence of is or the or was or to for the given input strings.
+s1 = 'match after the last newline character'
+s2 = 'and then you want to test'
+s3 = 'this is good bye then'
+s4 = 'who was there to see?'
+pat = re.compile(r'(the|was|is|to)')
+pat.search(s1).start(1)
+
+# c) Find the starting index of last occurrence of is or the or was or to for the given input strings.
+s1 = 'match after the last newline character'
+s2 = 'and then you want to test'
+s3 = 'this is good bye then'
+s4 = 'who was there to see?'
+
+pat = re.compile(r'.*(the|was|is|to)')
+pat.search(s1).start(1)
+
+# d) The given input string contains : exactly once. Extract all characters after the : as output.
+ip = 'fruits:apple, mango, guava, blueberry'
+re.search(r':(.*)', ip)[1]
+
+# e) The given input strings contains some text followed by - followed by a number.
+# Replace that number with its log value using math.log().
+import math
+s1 = 'first-3.14'
+s2 = 'next-123'
+pat = re.compile(r'-(\d+[.]?\d+)')
+pat.sub(lambda m: '-' + str(math.log(float(m[1]))), s1)
+
+# f) Replace all occurrences of par with spar, spare with extra and park with garden for the given input strings.
+str1 = 'apartment has a park'
+str2 = 'do you have a spare cable'
+str3 = 'write a parser'
+d = {"par": "spar", "spare": "extra", "park": "garden"}
+pat = re.compile(r"(" + "|".join(sorted([k for k in d.keys()], key=len, reverse=True)) + r')')
+pat.sub(lambda m: d[m[1]], str1)
+
+# g) Extract all words between ( and ) from the given input string as a list.
+# Assume that the input will not contain any broken parentheses.
+ip = 'another (way) to reuse (portion) matched (by) capture groups'
+re.findall(r'\((.*?)\)', ip)
+
+# h) Extract all occurrences of < up to next occurrence of >,
+# provided there is at least one character in between < and >.
+ip = 'a<apple> 1<> b<bye> 2<> c<cat>'
+re.findall(r'(<.+?>)', ip)
+
+# i) Use re.findall to get the output as shown below for the given input strings.
+# Note the characters used in the input strings carefully.
+row1 = '-2,5 4,+3 +42,-53 4356246,-357532354 '
+row2 = '1.32,-3.14 634,5.63 63.3e3,9907809345343.235 '
+
+pat = re.compile(r'(.*?),(.*?) ')
+pat.findall(row1)
+
+# j) This is an extension to previous question.
+# For row1, find the sum of integers of each tuple element. For example, sum of -2 and 5 is 3.
+# For row2, find the sum of floating-point numbers of each tuple element. For example, sum of 1.32 and -3.14 is -1.82.
+[int(p[0]) + int(p[1]) for p in pat.findall(row1)]
+[float(p[0]) + float(p[1]) for p in pat.findall(row2)]
+
+# k) Use re.split to get the output as shown below.
+ip = '42:no-output;1000:car-truck;SQEX49801'
+# ['42', 'output', '1000', 'truck', 'SQEX49801']
+re.split(r';|:.*?-', ip)
+re.split(r':.+?-(.+?);', ip)
+
+# l) For the given list of strings,
+# change the elements into a tuple of original element and number of times t occurs in that element.
+words = ['sequoia', 'attest', 'tattletale', 'asset']
+[(w, re.subn(r't', '', w)[1]) for w in words]
+[re.subn(r't', '', w) for w in words]
+
+# m) The given input string has fields separated by :.
+# Each field contains four uppercase alphabets followed optionally by two digits.
+# Ignore the last field, which is empty.
+# See docs.python: Match.groups and use re.finditer to get the output as shown below.
+# If the optional digits aren't present, show 'NA' instead of None.
+ip = 'TWXA42:JWPA:NTED01:'
+# [('TWXA', '42'), ('JWPA', 'NA'), ('NTED', '01')]
+[m.groups(default='NA') for m in re.finditer(r'(\w{4})(\d\d)?:')]
+[m.groups(default='NA') for m in re.finditer(r'(.{4})(..)?:')]
+
+# n) Convert the comma separated strings to corresponding dict objects as shown below.
+row1 = 'name:rohan,maths:75,phy:89,'
+row2 = 'name:rose,maths:88,phy:92,'
+pat = re.compile(r'(.*?):(.*?),')
+# {'name': 'rohan', 'maths': '75', 'phy': '89'}
+{m[1]:m[2] for m in pat.finditer(row1)}
+# {'name': 'rose', 'maths': '88', 'phy': '92'}
