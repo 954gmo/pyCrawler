@@ -38,6 +38,7 @@ re.Match <= re.Pattern.fullmatch(string)
 
 iterable <= re.finditer(pattern, string, flags=0)
 
+re.Match.expand
 
 
 # modifying string
@@ -807,3 +808,357 @@ pat = re.compile(r'(.*?):(.*?),')
 # {'name': 'rohan', 'maths': '75', 'phy': '89'}
 {m[1]:m[2] for m in pat.finditer(row1)}
 # {'name': 'rose', 'maths': '88', 'phy': '92'}
+
+"""
+    -------------- 10 -------------------
+"""
+words = ['cute', 'cat', 'cot', 'coat', 'cost', 'scuttle']
+# same as: r'cot|cut' or r'c(o|u)t'
+[w for w in words if re.search(r'c[ou]t', w)]
+# same as: r'(a|e|o)+t'
+re.sub(r'[aeo]+t', 'X', 'meeting cute boat site foot')
+
+re.findall(r'[0-9]+', 'Sample123string42with777numbers')
+
+# whole words made up of lowercase alphabets and digits only
+re.findall(r'\b[a-z0-9]+\b', 'coat Bin food tar12 best')
+
+# whole words made up of lowercase alphabets, but starting with 'p' to 'z'
+re.findall(r'\b[p-z][a-z]*\b', 'coat tin food put stoop best')
+
+# whole words made up of only 'a' to 'f' and 'p' to 't' lowercase alphabets
+re.findall(r'\b[a-fp-t]+\b', 'coat tin food put stoop best')
+
+# all non-digits
+re.findall(r'[^0-9]+', 'Sample123string42with777numbers')
+re.findall(r'\D+', 'Sample123string42with777numbers')
+
+# remove first two columns where : is delimiter
+re.sub(r'\w+?:', '', 'foo:123:bar:baz', count=2)
+re.sub(r'\A([^:]+:){2}', '', 'foo:123:bar:baz', count=1)
+
+# deleting characters at end of string based on a delimiter
+'foo=42; baz=123'
+re.sub(r'=[^=]+\Z', '', 'foo=42; baz=123')
+
+dates = '2020/04/25,1986/Mar/02,77/12/31'
+# Note that the third character set negates comma as well
+# and comma is matched optionally outside the capture groups
+re.findall(r'([^/]+)/([^/]+)/([^/,]+),?', dates)
+
+words = ['tryst', 'fun', 'glyph', 'pity', 'why']
+# words not containing vowel characters
+[w for w in words if re.fullmatch(r'[^aeiou]+', w)]
+[w for w in words if re.search(r'\A[^aeiou]+\Z', w)]
+[w for w in words if not re.search(r'[aeiou]', w)]
+
+# - should be first or last character or escaped using \.
+re.findall(r'\b[a-z-]{2,}\b', 'ab-cd gh-c 12-423')
+re.findall(r'\b[a-z\-0-9]{2,}\b', 'ab-cd gh-c 12-423')
+
+# ^ should be other than first character or escaped using \.
+re.findall(r'a[+^]b', 'f*(a^b) - 3*(a+b)')
+re.findall(r'a[\^+]b', 'f*(a^b) - 3*(a+b)')
+
+# [ can be escaped with \ or placed as last character. ] can be escaped with \ or placed as first character.
+re.search(r'[]a-z0-9[]+', 'words[5] = tea')[0]
+re.search(r'[a-z\[\]0-9]+', 'words[5] = tea')[0]
+
+# \ should be escaped using \.
+print(re.search(r'[a\\b]+', r'5ba\babc2')[0])
+
+# \w is similar to [a-zA-Z0-9_] for matching word characters (recall the definition for word boundaries)
+# \d is similar to [0-9] for matching digit characters
+# \s is similar to [ \t\n\r\f\v] for matching whitespace characters
+
+re.split(r'\d+', 'Sample123string42with777numbers')
+re.findall(r'\d+', 'foo=5, bar=3; x=83, y=120')
+
+''.join(re.findall(r'\b\w', 'sea eat car rat eel tea'))
+re.findall(r'[\w\s]+', 'tea sea-pit sit-lean\tbean')
+
+re.sub(r'\D+', '-', 'Sample123string42with777numbers')
+re.sub(r'\W+', '', 'foo=5, bar=3; x=83, y=120')
+
+s = '   1..3  \v\f  foo_baz 42\tzzz   \r\n1-2-3  '
+re.findall(r'\S+', s)
+re.findall(r'[\w.-]+', s)
+
+# numeric ranges
+# numbers between 10 to 29
+re.findall(r'\b[12]\d\b', '23 154 12 26 98234')
+
+# numbers >= 100
+re.findall(r'\b[1-9]\d{2,}\b', '23 154 12 26 98234')
+re.findall(r'\b\d{3,}\b', '23 154 12 26 98234')
+# numbers >= 100 if there are leading zeros
+re.findall(r'\b0*[1-9]\d{2,}\b', '0501 035 154 12 26 98234')
+
+# numbers < 350
+m_iter = re.finditer(r'\d+', '45 349 651 593 4 204')
+[m[0] for m in m_iter if float(m[0]) < 350]
+
+
+def num_range(s):
+    return '1' if 200 <= int(s[0]) <= 650 else '0'
+
+re.sub(r'\d+', num_range, '45 349 651 593 4 204')
+re.sub(r'\d+', lambda m: '1' if 200 <= int(m[0]) <= 650 else '0', '45 349 651 593 4 204')
+
+# a) For the list items, filter all elements starting with hand and ending with s or y or le.
+items = ['-handy', 'hand', 'handy', 'unhand', 'hands', 'handle']
+[i for i in items if re.search('\Ahand.*?(s|y|le)\Z', i)]
+[i for i in items if re.fullmatch('hand.*?([sy]|le)', i)]
+
+# b) Replace all whole words reed or read or red with X.
+ip = 'redo red credible :read: rod reed'
+re.sub(r'\bre[ea]?d\b', 'X', ip)
+
+# c) For the list words, filter all elements containing e or i followed by l or n. Note that the order mentioned should be followed.
+words = ['surrender', 'unicorn', 'newer', 'door', 'empty', 'eel', 'pest']
+[w for w in words if re.search(r'[ei].*[ln]', w)]
+
+# d) For the list words, filter all elements containing e or i and l or n in any order.
+words = ['surrender', 'unicorn', 'newer', 'door', 'empty', 'eel', 'pest']
+[w for w in words if re.search(r'[ei]', w) and re.search(r'[ln]', w)]
+[w for w in words if re.search(r'([ei].*[ln]|[ln].*[ei])', w)]
+
+# e) Extract all hex character sequences, with 0x optional prefix.
+# Match the characters case insensitively,
+# and the sequences shouldn't be surrounded by other word characters.
+str1 = '128A foo 0xfe32 34 0xbar'
+str2 = '0XDEADBEEF place 0x0ff1ce bad'
+pat = re.compile(r'\b(0x)?[a-f\d]+\b', flags=re.I)
+[s[0] for s in pat.finditer(str1)]
+
+# f) Delete from ( to the next occurrence of ) unless they contain parentheses characters in between.
+str1 = 'def factorial()'
+str2 = 'a/b(division) + c%d(#modulo) - (e+(j/k-3)*4)'
+str3 = 'Hi there(greeting). Nice day(a(b)'
+
+pat = re.compile(r'\([^(]*?\)')
+pat = re.compile(r'\([^()]*\)')
+pat.sub('', str1)
+
+# g) For the list words, filter all elements not starting with e or p or u.
+words = ['surrender', 'unicorn', 'newer', 'door', 'empty', 'eel', 'pest']
+[w for w in words if re.search(r'\A[^epu]', w)]
+
+# h) For the list words, filter all elements not containing u or w or ee or -.
+words = ['p-t', 'you', 'tea', 'heel', 'owe', 'new', 'reed', 'ear']
+[w for w in words if not re.search(r'[uw\-]|ee', w)]
+[w for w in words if not re.search(r'([uw\-]|ee)', w)]
+
+# i) The given input strings contain fields separated by , and fields can be empty too. Replace last three fields with WHTSZ323.
+row1 = '(2),kite,12,,D,C,,'
+row2 = 'hi,bye,sun,moon'
+pat = re.compile(r'([^,]*?,[^,]*?,[^,]*?)\Z')
+pat.sub('WHTSZ323', row1)
+
+pat = re.compile(r'(,[^,]*?){3}\Z')
+pat.sub(',WHTSZ323', row1)
+
+# j) Split the given strings based on consecutive sequence of digit or whitespace characters.
+str1 = 'lion \t Ink32onion Nice'
+str2 = '**1\f2\n3star\t7 77\r**'
+
+pat = re.compile(r'[\s\d]+')
+pat.split(str1)
+
+# k) Delete all occurrences of the sequence <characters> where characters is one or more non > characters and cannot be empty.
+ip = 'a<apple> 1<> b<bye> 2<> c<cat>'
+re.sub(r'<[^>]+>', '', ip)
+
+# m) For the given list, filter all elements containing any number sequence greater than 624.
+items = ['hi0000432abcd', 'car00625', '42_624 0512', '3.14 96 2 foo1234baz']
+# [i for i in items if re.search(r'') ]
+pat = re.compile(r'\d+[.]?\d+')
+for i in items:
+    for m in pat.finditer(i):
+        if float(m[0]) > 624:
+            print(i)
+
+# [i for i in items if float(m[0]) > 624 for m in pat.finditer(i)]
+[i for i in items if any(float(m[0]) > 624 for m in pat.finditer(i))]
+
+# n) Count the maximum depth of nested braces for the given strings.
+# Unbalanced or wrongly ordered braces should return -1.
+# Note that this will require a mix of regular expressions and Python code.
+
+
+def max_nested_braces(ip):
+    cnt = 0
+    while True:
+        ip, no_of_subs = re.subn(r'\{[^{}]*\}', ip)
+        if no_of_subs == 0:
+            break
+        cnt += 1
+    if re.search(r'[{}]', ip):
+        return -1
+    return cnt
+
+
+max_nested_braces('a*b')
+# 0
+max_nested_braces('}a+b{')
+# -1
+max_nested_braces('a*b+{}')
+# 1
+max_nested_braces('{{a+2}*{b+c}+e}')
+# 2
+max_nested_braces('{{a+2}*{b+{c*d}}+e}')
+# 3
+max_nested_braces('{{a+2}*{\n{b+{c*d}}+e*d}}')
+# 4
+max_nested_braces('a*{b+c*{e*3.14}}}')
+# -1
+
+# o) By default, str.split method will split on whitespace and remove empty strings from the result.
+# Which re module function would you use to replicate this functionality?
+ip = ' \t\r  so  pole\t\t\t\n\nlit in to \r\n\v\f  '
+re.split(r'\s+', ip)    # ['', 'so', 'pole', 'lit', 'in', 'to', '']
+re.findall(r'\S+', ip)  # ['so', 'pole', 'lit', 'in', 'to']
+
+# p) Convert the given input string to two different lists as shown below.
+ip = 'price_42 roast^\t\n^-ice==cat\neast'
+pat = re.compile(r'(\w+)[\^\s=-]*')
+pat = re.compile(r'\b\w+\b')
+pat.findall(ip)
+# ['price_42', 'roast', 'ice', 'cat', 'east']
+re.split(r'(\b\W+\b)', ip)
+# ['price_42', ' ', 'roast', '^\t\n^-', 'ice', '==', 'cat', '\n', 'east']
+
+# q) Filter all elements whose first non-whitespace character is not a # character.
+# Any element made up of only whitespace characters should be ignored as well.
+items = ['    #comment', '\t\napple #42', '#oops', 'sure', 'no#1', '\t\r\f']
+[i for i in items if not re.search(r'^(\s*)#.*|^\s*$', i)]
+[i for i in items if re.search(r'\A\s*[^#\s]', i)]
+
+
+"""
+    ----------------- 11 -----------------------
+"""
+# remove square brackets that surround digit characters
+# note that use of raw strings for replacement string
+re.sub(r'\[(\d+)\]', r'\1', '[52] apples and [31] mangoes')
+
+# replace __ with _ and delete _ if it is alone
+re.sub(r'(_)?_', r'\1', '_foo_ __123__ _baz_')
+
+# swap words that are separated by a comma
+re.sub(r'(\w+),(\w+)', r'\2,\1', 'good,bad 42,24')
+
+# ambiguity between \N and digit characters part of replacement string
+# re.error: invalid group reference 15 at position 2
+re.sub(r'\[(\d+)\]', r'(\15)', '[52] apples and [31] mangoes')
+# \g<N> solves this issue
+re.sub(r'\[(\d+)\]', r'(\g<1>5)', '[52] apples and [31] mangoes')
+# you can also use octal escapes
+re.sub(r'\[(\d+)\]', r'(\1\065)', '[52] apples and [31] mangoes')
+
+# add something around the matched strings using \g<0>
+re.sub(r'[a-z]+', r'{\g<0>}', '[52] apples and [31] mangoes')
+# note the use of '+' instead of '*' quantifier to avoid empty matching
+re.sub(r'.+', r'Hi. \g<0>. Have a nice day', 'Hello world')
+# duplicate first field and add it as last field
+re.sub(r'\A([^,]+),.+', r'\g<0>,\1', 'fork,42,nice,3.14')
+
+# whole words that have at least one consecutive repeated character
+# \g<N> syntax is not available in RE definition,
+# use formats like hexadecimal escapes to avoid ambiguity between normal digit characters and backreferences.
+words = ['effort', 'flee', 'facade', 'oddball', 'rat', 'tool']
+[w for w in words if re.search(r'(\w)\1', w)]
+[w for w in words if re.search(r'\b\w*(\w)\1\w*\b', w)]
+
+# non-capturing groups
+# normal capture group will hinder ability to get whole match
+# non-capturing group to the rescue
+re.findall(r'\b\w*(?:st|in)\b', 'cost akin more east run against')
+re.findall(r'\b\w*(st|in)\b', 'cost akin more east run against')
+
+# capturing wasn't needed here, only common grouping and quantifier
+re.split(r'hand(?:y|ful)?', '123hand42handy777handful500')
+re.split(r'hand(y|ful)?', '123hand42handy777handful500')
+
+# with normal grouping, need to keep track of all the groups
+re.sub(r'\A(([^,]+,){3})([^,]+)', r'\1(\3)', '1,2,3,4,5,6,7')
+# using non-capturing groups, only relevant groups have to be tracked
+re.sub(r'\A((?:[^,]+,){3})([^,]+)', r'\1(\2)', '1,2,3,4,5,6,7')
+
+re.search(r'\A(([^,]+,){3})', '1,2,3,4,5,6,7')
+
+s = 'hi 123123123 bye 456123456'
+re.findall(r'(123)+', s)
+# text matched by a capture group with a quantifier will give only the last match, not entire match.
+# Use a capture group around the grouping and quantifier together to get the entire matching portion.
+re.findall(r'(?:123)+', s)
+
+# note that this issue doesn't affect substitutions
+re.sub(r'(123)+', 'X', s)
+
+row = 'one,2,3.14,42,five'
+# surround only fourth column with double quotes
+# note the loss of columns in the first case
+re.sub(r'(([^,]+,){3})([^,]+),', r'\1"\3",', row)
+re.sub(r'(([^,]+,){3})([^,]+)', r'\1"\3"', row)
+# re.sub(r'\A([^,]+,){3}([^,]+)', r'\1"\2"', row)
+re.sub(r'\A(([^,]+,){3})([^,]+)', r'\1"\3"', row)
+
+# However, there are situations where capture groups cannot be avoided. In such cases, you'd need to manually work with re.Match objects to get desired results.
+# whole words containing at least one consecutive repeated character
+words = 'effort flee facade oddball rat tool'
+# re.findall(r'\b\w*(\w)\1\w*\b', words)
+[m[0] for m in re.finditer(r'\b\w*(\w)\1\w*\b', words)]
+
+# Named capture groups
+re.sub(r'(?P<fw>\w+),(?P<sw>\w+)', r'\g<sw>,\g<fw>', 'good,bad 42,24')
+s = 'aa a a a 42 f_1 f_1 f_13.14'
+re.sub(r'\b(?P<dup>\w+)( (?P=dup))+\b', r'\g<dup>', s)
+
+sentence = 'I bought an apple'
+m = re.search(r'(?P<fruit>\w+)\Z', sentence)
+m[1], m['fruit'], m.group('fruit')
+
+details = '2018-10-25,car,2346'
+re.search(r'(?P<date>[^,]+),(?P<product>[^,]+)', details).groupdict()
+# normal groups won't be part of the output
+re.search(r'(?P<date>[^,]+),([^,]+)', details).groupdict()
+
+# multiple matches
+s = 'good,bad 42,24'
+[m.groupdict() for m in re.finditer(r'(?P<fw>\w+),(?P<sw>\w+)', s)]
+
+# conditional groups
+words = ['"hi"', 'bye', 'bad"', '"good"', '42', '"3']
+pat = re.compile(r'(?P<quote>")?\w+(?(quote)")')
+pat = re.compile(r'(")?\w+(?(1)")')
+pat = re.compile(r'"\w+"|\w+')
+[w for w in words if pat.fullmatch(w)]
+
+# filter elements containing word characters surrounded by ()
+# or, containing word characters separated by a hyphen
+words = ['(hi)', 'good-bye', 'bad', '(42)', '-oh', 'i-j', '(-)']
+# same as: r'\(\w+\)|\w+-\w+'
+pat = re.compile(r'(\()?\w+(?(1)\)|-\w+)')
+[w for w in words if pat.fullmatch(w)]
+# ['(hi)', 'good-bye', '(42)', 'i-j']
+
+re.sub(r'w(.*)m', r'[\1]', 'awesome')
+re.search(r'w(.*)m', 'awesome').expand(r'[\1]')
+
+dates = '2020/04/25,1986/03/02,77/12/31'
+[m.expand(r'Month:\2, Year:\1') for m in re.finditer(r'(\d+?)/(\d+?)/(\d+?),?', dates)]
+[m.expand(r'Month:\2, Year:\1') for m in re.finditer(r'([^/]+?)/([^/]+)/([^,]+),?', dates)]
+
+# a) Replace the space character that occurs after a word ending with a or r with a newline character.
+ip = 'area not a _a2_ roar took 22'
+print(re.sub(r'\b(.*?[ar])\b', r'\1\n', ip))    # why not
+print(re.sub(r'\b(\w*?[ar])\b', r'\1\n', ip))   # why not
+print(re.sub(r'(\b\w*?[ar]\b)', r'\1\n', ip))   # why not
+print(re.sub(r'([ar]) ', r'\1\n', ip))      # ??
+
+# b) Add [] around words starting with s and containing e and t in any order.
+ip = 'sequoia subtle exhibit asset sets tests site'
+# re.sub(r'\b(s.*?(?:e.*?t|t.*?e).*?)\b', r'[\1]', ip)
+# re.sub(r'(s.*?e.*?t|s.*?t.*?e)', r'[\1]', ip)
+re.sub(r'\bs\w*(t\w*e|e\w*t)\w*', r'[\g<0>]', ip)
